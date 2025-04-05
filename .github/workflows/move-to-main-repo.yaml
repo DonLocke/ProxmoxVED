@@ -132,7 +132,7 @@ jobs:
           cp ../install/$script_name-install.sh install/.
           cp ../frontend/public/json/$script_name.json frontend/public/json/.
 
-          sed -i 's|source <(curl -s https://raw.githubusercontent.com/community-scripts/ProxmoxVED/main/misc/build.func)|source <(curl -s https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/misc/build.func)|' ct/$script_name.sh
+          sed -i 's|source <(curl -s https://raw.githubusercontent.com/DonLocke/ProxmoxVED/add-allstarlink-script-testing/misc/build.func)|source <(curl -s https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/misc/build.func)|' ct/$script_name.sh
 
           git add .
           if git diff --cached --exit-code; then
