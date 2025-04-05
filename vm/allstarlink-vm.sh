@@ -428,10 +428,10 @@ virt-customize -q -a "${FILE}" \
     --run-command "rm -f /tmp/asl-apt-repos.deb12_all.deb" >/dev/null
 msg_ok "Added ASL Package Repository"
 
-msg_info "Installing AllStarLink"
+msg_info "Installing AllStarLink (patience)"
 virt-customize -q -a "${FILE}" \
     --install asl3 \
-    --firstboot-command "sed -i \"/secret /s/= .*/= $(openssl rand -base64 18 | tr -dc 'a-zA-Z0-9' | head -c13)/\" /etc/asterisk/manager.conf" \
+    --run-command "sed -i \"/secret /s/= .*/= $(openssl rand -base64 18 | tr -dc 'a-zA-Z0-9' | head -c13)/\" /etc/asterisk/manager.conf" \
     --firstboot-command "node-setup" >/dev/null
 msg_ok "Installed AllStarLink"
 
@@ -439,18 +439,20 @@ if (whiptail --backtitle "Proxmox VE Helper Scripts" --title "SETTINGS" --yesno 
     msg_info "Installing Allmon3"
     virt-customize -q -a "${FILE}" \
         --install allmon3 \
-        --firstboot-command "sed -i \"s/;\[1999\]/\[$(grep -oP '^\[\d+\]\(node-main\)' /etc/asterisk/rpt.conf | grep -oP '\d+')\]/\" /etc/allmon3/allmon3.ini" \
+        --firstboot-command "sed -i \"s/;\[1999\]/\[\$(grep -oP '^\[\d+\]\(node-main\)' /etc/asterisk/rpt.conf | grep -oP '\d+')\]/\" /etc/allmon3/allmon3.ini" \
         --firstboot-command "sed -i \"s/;host/host/\" /etc/allmon3/allmon3.ini" \
         --firstboot-command "sed -i \"s/;user/user/\" /etc/allmon3/allmon3.ini" \
-        --firstboot-command "sed -i \"s/;pass=.*/pass=$(sed -ne 's/^secret = //p' /etc/asterisk/manager.conf)/\" /etc/allmon3/allmon3.ini" \
+        --firstboot-command "sed -i \"s/;pass=.*/pass=\$(sed -ne 's/^secret = //p' /etc/asterisk/manager.conf)/\" /etc/allmon3/allmon3.ini" \
         --firstboot-command "systemctl restart allmon3" >/dev/null
     msg_ok "Installed Allmon3"
 fi
 
+msg_info "Installing Update Script"
 virt-customize -q -a "${FILE}" \
     --touch /usr/bin/update \
-    --write "bash -c \"\$(curl -fsSL https://github.com/community-scripts/ProxmoxVED/raw/main/vm/update/allstarlink.sh)\"":/usr/bin/update \
+    --write /usr/bin/update:"bash -c \"\$(curl -fsSL https://github.com/community-scripts/ProxmoxVED/raw/main/vm/update/allstarlink.sh)\"" \
     --chmod 755:/usr/bin/update
+msg_ok "Installed  Update Script"
 
 msg_info "Creating a AllStarLink VM"
 qm create $VMID -agent 1${MACHINE} -tablet 0 -localtime 1 -bios ovmf${CPU_TYPE} -cores $CORE_COUNT -memory $RAM_SIZE \
