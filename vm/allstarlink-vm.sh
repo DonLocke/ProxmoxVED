@@ -416,8 +416,6 @@ for i in {0,1}; do
     eval DISK${i}_REF=${STORAGE}:${DISK_REF:-}${!disk}
 done
 
-#TODO Custom stuff
-
 msg_info "Installing Pre-Requisite libguestfs-tools onto Host"
 apt-get -qq update && apt-get -qq install libguestfs-tools lsb-release -y >/dev/null
 msg_ok "Installed libguestfs-tools successfully"
@@ -433,11 +431,11 @@ msg_ok "Added ASL Package Repository"
 msg_info "Installing AllStarLink"
 virt-customize -q -a "${FILE}" \
     --install asl3 \
-    --run-command "sed -i \"/secret /s/= .*/= $(openssl rand -base64 18 | tr -dc 'a-zA-Z0-9' | head -c13)/\" /etc/asterisk/manager.conf" \
+    --firstboot-command "sed -i \"/secret /s/= .*/= $(openssl rand -base64 18 | tr -dc 'a-zA-Z0-9' | head -c13)/\" /etc/asterisk/manager.conf" \
     --firstboot-command "node-setup" >/dev/null
 msg_ok "Installed AllStarLink"
 
-if (whiptail --backtitle "Proxmox VE Helper Scripts" --title "SETTINGS" --yesno "Would you like to add Allmon3?" --no-button Advanced 10 58); then
+if (whiptail --backtitle "Proxmox VE Helper Scripts" --title "SETTINGS" --yesno "Would you like to add Allmon3?" 10 58); then
     msg_info "Installing Allmon3"
     virt-customize -q -a "${FILE}" \
         --install allmon3 \
