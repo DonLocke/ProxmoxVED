@@ -34,6 +34,14 @@
         {
             "text": "Options to Install Allmon3",
             "type": "info"
+        },
+        {
+            "text": "AllStarLink requires additional steps to setup, see configuration guide at `https://allstarlink.github.io/user-guide/menu/`",
+            "type": "warning"
+        },
+        {
+            "text": "Allmon3 requires additional steps to setup, see configuration guide at `https://allstarlink.github.io/allmon3/config/`",
+            "type": "warning"
         }
     ]
 }

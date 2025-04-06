@@ -431,19 +431,14 @@ msg_ok "Added ASL Package Repository"
 msg_info "Installing AllStarLink (patience)"
 virt-customize -q -a "${FILE}" \
     --install asl3 \
-    --run-command "sed -i \"/secret /s/= .*/= $(openssl rand -base64 18 | tr -dc 'a-zA-Z0-9' | head -c13)/\" /etc/asterisk/manager.conf" \
-    --run-command "node-setup" >/dev/null
+    --run-command "sed -i \"/secret /s/= .*/= $(openssl rand -base64 18 | tr -dc 'a-zA-Z0-9' | head -c13)/\" /etc/asterisk/manager.conf" >/dev/null
 msg_ok "Installed AllStarLink"
 
 if (whiptail --backtitle "Proxmox VE Helper Scripts" --title "SETTINGS" --yesno "Would you like to add Allmon3?" 10 58); then
     msg_info "Installing Allmon3"
     virt-customize -q -a "${FILE}" \
         --install allmon3 \
-        --firstboot-command "sed -i \"s/;\[1999\]/\[\$(grep -oP '^\[\d+\]\(node-main\)' /etc/asterisk/rpt.conf | grep -oP '\d+')\]/\" /etc/allmon3/allmon3.ini" \
-        --firstboot-command "sed -i \"s/;host/host/\" /etc/allmon3/allmon3.ini" \
-        --firstboot-command "sed -i \"s/;user/user/\" /etc/allmon3/allmon3.ini" \
-        --firstboot-command "sed -i \"s/;pass=.*/pass=\$(sed -ne 's/^secret = //p' /etc/asterisk/manager.conf)/\" /etc/allmon3/allmon3.ini" \
-        --firstboot-command "systemctl restart allmon3" >/dev/null
+        --run-command "sed -i \"s/;pass=.*/;pass=\$(sed -ne 's/^secret = //p' /etc/asterisk/manager.conf)/\" /etc/allmon3/allmon3.ini" >/dev/null
     msg_ok "Installed Allmon3"
 fi
 
