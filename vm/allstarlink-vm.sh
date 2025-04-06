@@ -432,7 +432,7 @@ msg_info "Installing AllStarLink (patience)"
 virt-customize -q -a "${FILE}" \
     --install asl3 \
     --run-command "sed -i \"/secret /s/= .*/= $(openssl rand -base64 18 | tr -dc 'a-zA-Z0-9' | head -c13)/\" /etc/asterisk/manager.conf" \
-    --firstboot-command "node-setup" >/dev/null
+    --run-command "node-setup" >/dev/null
 msg_ok "Installed AllStarLink"
 
 if (whiptail --backtitle "Proxmox VE Helper Scripts" --title "SETTINGS" --yesno "Would you like to add Allmon3?" 10 58); then
@@ -451,7 +451,7 @@ msg_info "Installing Update Script"
 virt-customize -q -a "${FILE}" \
     --touch /usr/bin/update \
     --write /usr/bin/update:"bash -c \"\$(curl -fsSL https://github.com/community-scripts/ProxmoxVED/raw/main/vm/update/allstarlink.sh)\"" \
-    --chmod 755:/usr/bin/update
+    --chmod 755:/usr/bin/update  >/dev/null
 msg_ok "Installed  Update Script"
 
 msg_info "Creating a AllStarLink VM"
